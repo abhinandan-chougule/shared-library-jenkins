@@ -1,14 +1,15 @@
-def call(String serverName, String projectKey, String projectName) {
+def call(String scannerTool, String projectKey, String projectName) {
 
-    withSonarQubeEnv(serverName) {
+    def scannerHome = tool scannerTool
 
+    withSonarQubeEnv(scannerTool) {
         withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
 
             sh """
-                sonar-scanner \
+                ${scannerHome}/bin/sonar-scanner \
                   -Dsonar.projectKey=${projectKey} \
                   -Dsonar.projectName=${projectName} \
-                  -Dsonar.login=${SONAR_TOKEN}
+                  -Dsonar.login=\$SONAR_TOKEN
             """
         }
     }
